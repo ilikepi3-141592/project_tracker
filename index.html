@@ -42,18 +42,18 @@
                     <option value="Building">Building</option>
                     <option value="Done">Done</option>
                 </select>
-                <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold w-full sm:w-auto">Add Project</button>
+                <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold w-full sm:w-auto transition-colors">Add Project</button>
             </div>
         </div>
 
-        <!-- Phase Navigation Tabs -->
-        <div class="flex overflow-x-auto gap-2 mb-4 pb-2 no-scrollbar" id="phaseTabs">
-            <button onclick="setFilter('All')" data-phase="All" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-blue-600 text-white transition-colors">All Projects</button>
-            <button onclick="setFilter('Idea')" data-phase="Idea" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Idea</button>
-            <button onclick="setFilter('Planning')" data-phase="Planning" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Planning</button>
-            <button onclick="setFilter('Sourcing Parts')" data-phase="Sourcing Parts" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Sourcing Parts</button>
-            <button onclick="setFilter('Building')" data-phase="Building" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Building</button>
-            <button onclick="setFilter('Done')" data-phase="Done" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Done</button>
+        <!-- Phase Navigation Tabs (Mobile swipeable, Desktop wrapping) -->
+        <div class="flex overflow-x-auto md:flex-wrap gap-2 md:gap-3 mb-6 pb-2 no-scrollbar" id="phaseTabs">
+            <button onclick="setFilter('All')" data-phase="All" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all transform hover:-translate-y-0.5">All Projects</button>
+            <button onclick="setFilter('Idea')" data-phase="Idea" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Idea</button>
+            <button onclick="setFilter('Planning')" data-phase="Planning" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Planning</button>
+            <button onclick="setFilter('Sourcing Parts')" data-phase="Sourcing Parts" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Sourcing Parts</button>
+            <button onclick="setFilter('Building')" data-phase="Building" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Building</button>
+            <button onclick="setFilter('Done')" data-phase="Done" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Done</button>
         </div>
 
         <!-- Spreadsheet / Project List -->
@@ -61,11 +61,11 @@
             <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Project</th>
-                        <th class="p-3 border-b border-gray-700">Description</th>
-                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Status</th>
-                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Total Cost</th>
-                        <th class="p-3 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Project</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700">Description</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Status</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Total Cost</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody id="projectTableBody">
@@ -81,24 +81,24 @@
 
     <!-- ==================== DETAILS VIEW ==================== -->
     <div id="detailsView" class="hidden">
-        <button onclick="showMainView()" class="mb-5 text-gray-400 hover:text-white flex items-center gap-2 py-2">
-            <span class="text-xl">&larr;</span> <span>Back to Dashboard</span>
+        <button onclick="showMainView()" class="mb-5 text-gray-400 hover:text-white flex items-center gap-2 py-2 transition-colors">
+            <span class="text-xl">&larr;</span> <span class="font-medium">Back to Dashboard</span>
         </button>
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
             <div>
-                <h1 id="detailTitle" class="text-3xl font-bold text-blue-400 leading-tight">Project Name</h1>
-                <p id="detailDesc" class="text-gray-400 mt-1 max-w-xl text-sm md:text-base">Description goes here</p>
+                <h1 id="detailTitle" class="text-3xl md:text-4xl font-bold text-blue-400 leading-tight">Project Name</h1>
+                <p id="detailDesc" class="text-gray-400 mt-2 max-w-2xl text-sm md:text-base">Description goes here</p>
             </div>
-            <h2 id="detailTotal" class="text-2xl font-bold text-green-400 whitespace-nowrap">$0.00</h2>
+            <h2 id="detailTotal" class="text-2xl md:text-3xl font-bold text-green-400 whitespace-nowrap">$0.00</h2>
         </div>
 
         <!-- Add Component Form -->
-        <div class="glass-panel p-4 rounded-lg mb-6 flex flex-col sm:flex-row gap-3">
-            <input type="text" id="compName" placeholder="Component (e.g. RP2350A Chip)" class="p-3 rounded w-full sm:flex-1">
+        <div class="glass-panel p-4 md:p-5 rounded-lg mb-6 flex flex-col sm:flex-row gap-3">
+            <input type="text" id="compName" placeholder="Component (e.g. RP2350A Chip)" class="p-3 rounded w-full sm:flex-1 md:text-lg">
             <div class="flex flex-row gap-3 w-full sm:w-auto">
-                <input type="number" id="compCost" placeholder="Cost ($)" step="0.01" class="p-3 rounded flex-1 sm:w-32">
-                <button onclick="addComponent()" class="bg-green-600 hover:bg-green-500 text-white px-5 py-3 rounded font-bold whitespace-nowrap">Add Part</button>
+                <input type="number" id="compCost" placeholder="Cost ($)" step="0.01" class="p-3 rounded flex-1 sm:w-32 md:text-lg">
+                <button onclick="addComponent()" class="bg-green-600 hover:bg-green-500 text-white px-5 py-3 rounded font-bold whitespace-nowrap transition-colors">Add Part</button>
             </div>
         </div>
 
@@ -107,9 +107,9 @@
             <table class="w-full text-left border-collapse min-w-[400px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Component</th>
-                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Cost</th>
-                        <th class="p-3 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Component</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Cost</th>
+                        <th class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody id="componentTableBody">
@@ -121,28 +121,24 @@
 
     <!-- ==================== LOGIC ==================== -->
     <script>
-        // App State
         let projects = JSON.parse(localStorage.getItem('hardwareProjects')) || [];
         let currentProjectId = null;
-        let currentFilter = 'All'; // New variable for tab state
+        let currentFilter = 'All'; 
         const statusOptionsList = ["Idea", "Planning", "Sourcing Parts", "Building", "Done"];
 
-        // Data migration
         projects.forEach(p => {
             if (!p.components) p.components = [];
             if (!p.description) p.description = "";
         });
 
-        // --- NAVIGATION & FILTERS ---
         function setFilter(phase) {
             currentFilter = phase;
             
-            // Update button styles visually
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 if (btn.getAttribute('data-phase') === phase) {
-                    btn.className = "tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-blue-600 text-white transition-colors";
+                    btn.className = "tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all transform hover:-translate-y-0.5";
                 } else {
-                    btn.className = "tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors";
+                    btn.className = "tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5";
                 }
             });
             
@@ -165,7 +161,6 @@
             renderTable();
         }
 
-        // --- PROJECT FUNCTIONS (MAIN VIEW) ---
         function addProject() {
             const name = document.getElementById('projName').value;
             const desc = document.getElementById('projDesc').value;
@@ -173,17 +168,9 @@
 
             if (!name) return alert("Please enter a project name.");
 
-            projects.push({ 
-                id: Date.now(), 
-                name: name, 
-                description: desc, 
-                status: status, 
-                components: [] 
-            });
-            
+            projects.push({ id: Date.now(), name: name, description: desc, status: status, components: [] });
             saveData();
             
-            // If the user adds a project that doesn't match the current tab, switch back to 'All' so they can see it
             if (currentFilter !== 'All' && currentFilter !== status) {
                 setFilter('All');
             } else {
@@ -207,7 +194,7 @@
             if (project) {
                 project.status = newStatus;
                 saveData();
-                renderTable(); // Re-render immediately (if filtered, it might disappear from the current view!)
+                renderTable(); 
             }
         }
 
@@ -221,12 +208,10 @@
             const emptyState = document.getElementById('emptyState');
             tbody.innerHTML = ''; 
 
-            // Filter logic
             const filteredProjects = currentFilter === 'All' 
                 ? projects 
                 : projects.filter(p => p.status === currentFilter);
 
-            // Handle empty state
             if (filteredProjects.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
@@ -244,27 +229,26 @@
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800 transition-colors";
                 row.innerHTML = `
-                    <td class="p-3 border-b border-gray-700 font-medium cursor-pointer text-blue-300 hover:text-blue-100 whitespace-nowrap" onclick="showDetailsView(${p.id})">
+                    <td class="p-3 md:p-4 border-b border-gray-700 font-medium cursor-pointer text-blue-300 hover:text-blue-100 whitespace-nowrap" onclick="showDetailsView(${p.id})">
                         ${p.name} <span class="text-xs text-gray-500 ml-2 hidden sm:inline">(Click for parts)</span>
                     </td>
-                    <td class="p-3 border-b border-gray-700 text-sm text-gray-400 min-w-[150px]">
+                    <td class="p-3 md:p-4 border-b border-gray-700 text-sm text-gray-400 min-w-[150px]">
                         ${p.description || '<span class="text-gray-600 italic">No description</span>'}
                     </td>
-                    <td class="p-3 border-b border-gray-700 whitespace-nowrap">
-                        <select onchange="updateProjectStatus(${p.id}, this.value)" class="table-select px-2 py-2 text-sm rounded text-white outline-none w-full min-w-[110px]">
+                    <td class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">
+                        <select onchange="updateProjectStatus(${p.id}, this.value)" class="table-select px-2 py-2 text-sm md:text-base rounded text-white outline-none w-full min-w-[110px]">
                             ${selectOptionsHTML}
                         </select>
                     </td>
-                    <td class="p-3 border-b border-gray-700 font-mono whitespace-nowrap">$${totalCost.toFixed(2)}</td>
-                    <td class="p-3 border-b border-gray-700 text-center whitespace-nowrap">
-                        <button onclick="deleteProject(${p.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1">Delete</button>
+                    <td class="p-3 md:p-4 border-b border-gray-700 font-mono whitespace-nowrap">$${totalCost.toFixed(2)}</td>
+                    <td class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">
+                        <button onclick="deleteProject(${p.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1 transition-colors">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // --- COMPONENT FUNCTIONS (DETAILS VIEW) ---
         function addComponent() {
             const compName = document.getElementById('compName').value;
             const compCost = document.getElementById('compCost').value;
@@ -273,12 +257,7 @@
 
             const projectIndex = projects.findIndex(p => p.id === currentProjectId);
             if (projectIndex > -1) {
-                projects[projectIndex].components.push({
-                    id: Date.now(),
-                    name: compName,
-                    cost: compCost || 0
-                });
-                
+                projects[projectIndex].components.push({ id: Date.now(), name: compName, cost: compCost || 0 });
                 saveData();
                 renderDetails();
                 
@@ -325,22 +304,18 @@
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800 transition-colors";
                 row.innerHTML = `
-                    <td class="p-3 border-b border-gray-700 whitespace-nowrap">${c.name}</td>
-                    <td class="p-3 border-b border-gray-700 font-mono whitespace-nowrap">$${Number(c.cost).toFixed(2)}</td>
-                    <td class="p-3 border-b border-gray-700 text-center whitespace-nowrap">
-                        <button onclick="deleteComponent(${c.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1">Remove</button>
+                    <td class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">${c.name}</td>
+                    <td class="p-3 md:p-4 border-b border-gray-700 font-mono whitespace-nowrap">$${Number(c.cost).toFixed(2)}</td>
+                    <td class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">
+                        <button onclick="deleteComponent(${c.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1 transition-colors">Remove</button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // --- SYSTEM ---
-        function saveData() {
-            localStorage.setItem('hardwareProjects', JSON.stringify(projects));
-        }
+        function saveData() { localStorage.setItem('hardwareProjects', JSON.stringify(projects)); }
 
-        // Initial render
         renderTable();
     </script>
 </body>
