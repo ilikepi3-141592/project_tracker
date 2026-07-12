@@ -8,48 +8,54 @@
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: system-ui, sans-serif; }
         .glass-panel { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        input, select, textarea { background-color: #1e1e1e; color: white; border: 1px solid #333; }
+        input, select, textarea { background-color: #1e1e1e; color: white; border: 1px solid #333; outline: none; }
+        input:focus, select:focus { border-color: #3B82F6; }
         .table-select { background-color: #374151; border: 1px solid #4B5563; cursor: pointer; }
         .table-select:hover { border-color: #60A5FA; }
+        
+        /* Custom scrollbar for horizontal tables on desktop, invisible on mobile */
+        ::-webkit-scrollbar { height: 6px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8 max-w-4xl mx-auto">
+<body class="p-3 md:p-8 max-w-4xl mx-auto">
 
     <!-- ==================== MAIN VIEW ==================== -->
     <div id="mainView">
         <h1 class="text-3xl font-bold mb-6 text-blue-400">Project Tracker</h1>
 
         <!-- Add New Project Form -->
-        <div class="glass-panel p-5 rounded-lg mb-8 flex flex-col gap-4">
+        <div class="glass-panel p-4 md:p-5 rounded-lg mb-8 flex flex-col gap-4">
             <!-- Row 1: Name -->
-            <input type="text" id="projName" placeholder="Project Name (e.g. Strat Build)" class="w-full p-3 rounded">
+            <input type="text" id="projName" placeholder="Project Name (e.g. Strat Build)" class="w-full p-3 rounded text-lg">
             
             <!-- Row 2: Description -->
             <input type="text" id="projDesc" placeholder="Short description..." class="w-full p-3 rounded">
             
-            <!-- Row 3: Phase & Button -->
-            <div class="flex flex-row gap-3">
-                <select id="projStatus" class="p-3 rounded flex-1 md:flex-none md:w-64">
+            <!-- Row 3: Phase & Button (Stacks on mobile, row on tablet/desktop) -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <select id="projStatus" class="p-3 rounded w-full sm:w-64">
                     <option value="Idea">Idea</option>
                     <option value="Planning">Planning</option>
                     <option value="Sourcing Parts">Sourcing Parts</option>
                     <option value="Building">Building</option>
                     <option value="Done">Done</option>
                 </select>
-                <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold">Add Project</button>
+                <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold w-full sm:w-auto">Add Project</button>
             </div>
         </div>
 
         <!-- Spreadsheet / Project List -->
         <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 border-b border-gray-700">Project</th>
+                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Project</th>
                         <th class="p-3 border-b border-gray-700">Description</th>
-                        <th class="p-3 border-b border-gray-700">Status</th>
-                        <th class="p-3 border-b border-gray-700">Total Cost</th>
-                        <th class="p-3 border-b border-gray-700 text-center">Action</th>
+                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Status</th>
+                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Total Cost</th>
+                        <th class="p-3 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody id="projectTableBody">
@@ -61,33 +67,36 @@
 
     <!-- ==================== DETAILS VIEW ==================== -->
     <div id="detailsView" class="hidden">
-        <button onclick="showMainView()" class="mb-4 text-gray-400 hover:text-white flex items-center gap-2">
-            <span>&larr; Back to Dashboard</span>
+        <button onclick="showMainView()" class="mb-5 text-gray-400 hover:text-white flex items-center gap-2 py-2">
+            <span class="text-xl">&larr;</span> <span>Back to Dashboard</span>
         </button>
 
-        <div class="flex justify-between items-start mb-6">
+        <!-- Header: Stacks on mobile -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
             <div>
-                <h1 id="detailTitle" class="text-3xl font-bold text-blue-400">Project Name</h1>
-                <p id="detailDesc" class="text-gray-400 mt-1 max-w-xl">Description goes here</p>
+                <h1 id="detailTitle" class="text-3xl font-bold text-blue-400 leading-tight">Project Name</h1>
+                <p id="detailDesc" class="text-gray-400 mt-1 max-w-xl text-sm md:text-base">Description goes here</p>
             </div>
-            <h2 id="detailTotal" class="text-2xl font-bold text-green-400">$0.00</h2>
+            <h2 id="detailTotal" class="text-2xl font-bold text-green-400 whitespace-nowrap">$0.00</h2>
         </div>
 
         <!-- Add Component Form -->
-        <div class="glass-panel p-4 rounded-lg mb-6 flex flex-col md:flex-row gap-3">
-            <input type="text" id="compName" placeholder="Component (e.g. RP2350A Chip)" class="p-2 rounded flex-1">
-            <input type="number" id="compCost" placeholder="Cost ($)" step="0.01" class="p-2 rounded w-32">
-            <button onclick="addComponent()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold">Add Part</button>
+        <div class="glass-panel p-4 rounded-lg mb-6 flex flex-col sm:flex-row gap-3">
+            <input type="text" id="compName" placeholder="Component (e.g. RP2350A Chip)" class="p-3 rounded w-full sm:flex-1">
+            <div class="flex flex-row gap-3 w-full sm:w-auto">
+                <input type="number" id="compCost" placeholder="Cost ($)" step="0.01" class="p-3 rounded flex-1 sm:w-32">
+                <button onclick="addComponent()" class="bg-green-600 hover:bg-green-500 text-white px-5 py-3 rounded font-bold whitespace-nowrap">Add Part</button>
+            </div>
         </div>
 
         <!-- Components List -->
         <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse min-w-[400px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 border-b border-gray-700">Component</th>
-                        <th class="p-3 border-b border-gray-700">Cost</th>
-                        <th class="p-3 border-b border-gray-700 text-center">Action</th>
+                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Component</th>
+                        <th class="p-3 border-b border-gray-700 whitespace-nowrap">Cost</th>
+                        <th class="p-3 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody id="componentTableBody">
@@ -115,6 +124,7 @@
             currentProjectId = id;
             document.getElementById('mainView').classList.add('hidden');
             document.getElementById('detailsView').classList.remove('hidden');
+            window.scrollTo(0, 0); // Reset scroll position for mobile
             renderDetails();
         }
 
@@ -122,6 +132,7 @@
             currentProjectId = null;
             document.getElementById('detailsView').classList.add('hidden');
             document.getElementById('mainView').classList.remove('hidden');
+            window.scrollTo(0, 0);
             renderTable();
         }
 
@@ -184,20 +195,20 @@
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800 transition-colors";
                 row.innerHTML = `
-                    <td class="p-3 border-b border-gray-700 font-medium cursor-pointer text-blue-300 hover:text-blue-100" onclick="showDetailsView(${p.id})">
-                        ${p.name} <span class="text-xs text-gray-500 ml-2 block md:inline">(Click for parts)</span>
+                    <td class="p-3 border-b border-gray-700 font-medium cursor-pointer text-blue-300 hover:text-blue-100 whitespace-nowrap" onclick="showDetailsView(${p.id})">
+                        ${p.name} <span class="text-xs text-gray-500 ml-2 hidden sm:inline">(Click for parts)</span>
                     </td>
-                    <td class="p-3 border-b border-gray-700 text-sm text-gray-400">
+                    <td class="p-3 border-b border-gray-700 text-sm text-gray-400 min-w-[150px]">
                         ${p.description || '<span class="text-gray-600 italic">No description</span>'}
                     </td>
-                    <td class="p-3 border-b border-gray-700">
-                        <select onchange="updateProjectStatus(${p.id}, this.value)" class="table-select px-2 py-1 text-xs rounded text-white outline-none w-full md:w-auto">
+                    <td class="p-3 border-b border-gray-700 whitespace-nowrap">
+                        <select onchange="updateProjectStatus(${p.id}, this.value)" class="table-select px-2 py-2 text-sm rounded text-white outline-none w-full min-w-[110px]">
                             ${selectOptionsHTML}
                         </select>
                     </td>
-                    <td class="p-3 border-b border-gray-700 font-mono">$${totalCost.toFixed(2)}</td>
-                    <td class="p-3 border-b border-gray-700 text-center">
-                        <button onclick="deleteProject(${p.id})" class="text-red-400 hover:text-red-300">Delete</button>
+                    <td class="p-3 border-b border-gray-700 font-mono whitespace-nowrap">$${totalCost.toFixed(2)}</td>
+                    <td class="p-3 border-b border-gray-700 text-center whitespace-nowrap">
+                        <button onclick="deleteProject(${p.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -257,7 +268,7 @@
             tbody.innerHTML = '';
 
             if (project.components.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">No components added yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-gray-500">No components added yet.</td></tr>`;
                 return;
             }
 
@@ -265,10 +276,10 @@
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800 transition-colors";
                 row.innerHTML = `
-                    <td class="p-3 border-b border-gray-700">${c.name}</td>
-                    <td class="p-3 border-b border-gray-700 font-mono">$${Number(c.cost).toFixed(2)}</td>
-                    <td class="p-3 border-b border-gray-700 text-center">
-                        <button onclick="deleteComponent(${c.id})" class="text-red-400 hover:text-red-300">Remove</button>
+                    <td class="p-3 border-b border-gray-700 whitespace-nowrap">${c.name}</td>
+                    <td class="p-3 border-b border-gray-700 font-mono whitespace-nowrap">$${Number(c.cost).toFixed(2)}</td>
+                    <td class="p-3 border-b border-gray-700 text-center whitespace-nowrap">
+                        <button onclick="deleteComponent(${c.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1">Remove</button>
                     </td>
                 `;
                 tbody.appendChild(row);
