@@ -2,120 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hardware & Project Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #121212; color: #e0e0e0; font-family: system-ui, sans-serif; }
-        .glass-panel { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        input, select, textarea { background-color: #1e1e1e; color: white; border: 1px solid #333; outline: none; }
-        input:focus, select:focus { border-color: #3B82F6; }
-        .table-select { background-color: #374151; border: 1px solid #4B5563; cursor: pointer; }
-        .table-select:hover { border-color: #60A5FA; }
+        body { 
+            background-color: #0f172a; /* Richer dark blue-gray */
+            color: #e2e8f0; 
+            font-family: system-ui, -apple-system, sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-panel { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        input, select, textarea { 
+            background-color: #0f172a; 
+            color: white; 
+            border: 1px solid #334155; 
+            outline: none; 
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: #3b82f6; }
         
-        /* Hide scrollbars for clean tab navigation on mobile */
+        /* Hide scrollbars for clean tab navigation */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Custom scrollbar for horizontal tables */
-        .table-scroll::-webkit-scrollbar { height: 6px; }
-        .table-scroll::-webkit-scrollbar-track { background: #1e1e1e; }
-        .table-scroll::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
+
+        /* Custom details accordion animation */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
-<body class="p-3 md:p-8 max-w-4xl mx-auto">
+<body class="p-3 sm:p-6 md:p-8 max-w-6xl mx-auto pb-24">
 
     <!-- ==================== MAIN VIEW ==================== -->
-    <div id="mainView">
-        <h1 class="text-3xl font-bold mb-6 text-blue-400">Project Tracker</h1>
+    <div id="mainView" class="fade-in">
+        <header class="mb-6 md:mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                Projects
+            </h1>
+        </header>
 
-        <!-- Add New Project Form -->
-        <div class="glass-panel p-4 md:p-5 rounded-lg mb-8 flex flex-col gap-4">
-            <input type="text" id="projName" placeholder="Project Name (e.g. Strat Build)" class="w-full p-3 rounded text-lg">
-            <input type="text" id="projDesc" placeholder="Short description..." class="w-full p-3 rounded">
+        <!-- Collapsible Add Project Form (Saves screen space on mobile) -->
+        <details class="glass-panel rounded-2xl mb-6 group transition-all duration-300">
+            <summary class="p-4 md:p-5 cursor-pointer font-bold text-blue-400 flex justify-between items-center select-none">
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Create New Project
+                </span>
+                <svg class="w-5 h-5 text-gray-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </summary>
             
-            <div class="flex flex-col sm:flex-row gap-3">
-                <select id="projStatus" class="p-3 rounded w-full sm:w-64">
-                    <option value="Idea">Idea</option>
-                    <option value="Planning">Planning</option>
-                    <option value="Sourcing Parts">Sourcing Parts</option>
-                    <option value="Building">Building</option>
-                    <option value="Done">Done</option>
-                </select>
-                <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold w-full sm:w-auto transition-colors">Add Project</button>
+            <div class="p-4 md:p-5 border-t border-slate-700 flex flex-col gap-4">
+                <input type="text" id="projName" placeholder="Project Name (e.g. Strat Build)" class="w-full p-3 md:p-4 rounded-xl text-lg placeholder-slate-500">
+                <input type="text" id="projDesc" placeholder="Short description..." class="w-full p-3 md:p-4 rounded-xl placeholder-slate-500">
+                
+                <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
+                    <select id="projStatus" class="p-3 md:p-4 rounded-xl w-full sm:w-1/2 lg:w-64 text-slate-200">
+                        <option value="Idea">Idea</option>
+                        <option value="Planning">Planning</option>
+                        <option value="Sourcing Parts">Sourcing Parts</option>
+                        <option value="Building">Building</option>
+                        <option value="Done">Done</option>
+                    </select>
+                    <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white p-3 md:p-4 rounded-xl font-bold w-full sm:w-1/2 lg:w-auto transition-colors">
+                        Save Project
+                    </button>
+                </div>
             </div>
-        </div>
+        </details>
 
-        <!-- Phase Navigation Tabs (Mobile swipeable, Desktop wrapping) -->
+        <!-- Phase Navigation Tabs -->
         <div class="flex overflow-x-auto md:flex-wrap gap-2 md:gap-3 mb-6 pb-2 no-scrollbar" id="phaseTabs">
-            <button onclick="setFilter('All')" data-phase="All" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all transform hover:-translate-y-0.5">All Projects</button>
-            <button onclick="setFilter('Idea')" data-phase="Idea" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Idea</button>
-            <button onclick="setFilter('Planning')" data-phase="Planning" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Planning</button>
-            <button onclick="setFilter('Sourcing Parts')" data-phase="Sourcing Parts" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Sourcing Parts</button>
-            <button onclick="setFilter('Building')" data-phase="Building" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Building</button>
-            <button onclick="setFilter('Done')" data-phase="Done" class="tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5">Done</button>
+            <button onclick="setFilter('All')" data-phase="All" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all">All</button>
+            <button onclick="setFilter('Idea')" data-phase="Idea" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all">Idea</button>
+            <button onclick="setFilter('Planning')" data-phase="Planning" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all">Planning</button>
+            <button onclick="setFilter('Sourcing Parts')" data-phase="Sourcing Parts" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all">Sourcing Parts</button>
+            <button onclick="setFilter('Building')" data-phase="Building" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all">Building</button>
+            <button onclick="setFilter('Done')" data-phase="Done" class="tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all">Done</button>
         </div>
 
-        <!-- Spreadsheet / Project List -->
-        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto table-scroll">
-            <table class="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                    <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Project</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700">Description</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Status</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Total Cost</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="projectTableBody">
-                    <!-- Projects populate here -->
-                </tbody>
-            </table>
-            <!-- Empty State Message -->
-            <div id="emptyState" class="hidden p-8 text-center text-gray-500">
-                No projects in this phase.
+        <!-- Project Grid (Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols) -->
+        <div id="projectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <!-- Project Cards populate here -->
+        </div>
+        
+        <!-- Empty State Message -->
+        <div id="emptyState" class="hidden py-12 text-center">
+            <div class="inline-block p-4 rounded-full bg-slate-800 mb-4">
+                <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             </div>
+            <h3 class="text-lg font-bold text-slate-400">No projects found</h3>
+            <p class="text-slate-500 text-sm mt-1">Tap 'Create New Project' to get started.</p>
         </div>
     </div>
 
     <!-- ==================== DETAILS VIEW ==================== -->
     <div id="detailsView" class="hidden">
-        <button onclick="showMainView()" class="mb-5 text-gray-400 hover:text-white flex items-center gap-2 py-2 transition-colors">
-            <span class="text-xl">&larr;</span> <span class="font-medium">Back to Dashboard</span>
+        <button onclick="showMainView()" class="mb-6 text-slate-400 hover:text-white flex items-center gap-2 py-2 px-1 transition-colors group">
+            <svg class="w-6 h-6 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <span class="font-bold text-lg">Back</span>
         </button>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
-            <div>
-                <h1 id="detailTitle" class="text-3xl md:text-4xl font-bold text-blue-400 leading-tight">Project Name</h1>
-                <p id="detailDesc" class="text-gray-400 mt-2 max-w-2xl text-sm md:text-base">Description goes here</p>
+        <div class="glass-panel p-5 md:p-8 rounded-2xl mb-6">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
+                <div>
+                    <h1 id="detailTitle" class="text-3xl md:text-4xl font-extrabold text-white leading-tight">Project Name</h1>
+                    <p id="detailDesc" class="text-indigo-300 mt-2 text-base md:text-lg">Description goes here</p>
+                </div>
+                <div class="bg-slate-900/50 px-4 py-3 rounded-xl border border-slate-700/50 inline-block">
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Total Cost</p>
+                    <h2 id="detailTotal" class="text-3xl font-mono font-bold text-green-400">$0.00</h2>
+                </div>
             </div>
-            <h2 id="detailTotal" class="text-2xl md:text-3xl font-bold text-green-400 whitespace-nowrap">$0.00</h2>
         </div>
+
+        <h3 class="text-xl font-bold text-slate-300 mb-4 px-1">Parts & Components</h3>
 
         <!-- Add Component Form -->
-        <div class="glass-panel p-4 md:p-5 rounded-lg mb-6 flex flex-col sm:flex-row gap-3">
-            <input type="text" id="compName" placeholder="Component (e.g. RP2350A Chip)" class="p-3 rounded w-full sm:flex-1 md:text-lg">
-            <div class="flex flex-row gap-3 w-full sm:w-auto">
-                <input type="number" id="compCost" placeholder="Cost ($)" step="0.01" class="p-3 rounded flex-1 sm:w-32 md:text-lg">
-                <button onclick="addComponent()" class="bg-green-600 hover:bg-green-500 text-white px-5 py-3 rounded font-bold whitespace-nowrap transition-colors">Add Part</button>
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="text" id="compName" placeholder="Component Name (e.g. Pine Blank)" class="p-4 rounded-xl w-full sm:flex-1 text-lg">
+            <div class="flex gap-3">
+                <div class="relative flex-1 sm:w-32">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-bold">$</span>
+                    <input type="number" id="compCost" placeholder="0.00" step="0.01" class="p-4 pl-8 rounded-xl w-full text-lg">
+                </div>
+                <button onclick="addComponent()" class="bg-green-600 active:bg-green-700 hover:bg-green-500 text-white px-6 py-4 rounded-xl font-bold transition-colors">
+                    <svg class="w-6 h-6 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span class="hidden sm:inline">Add</span>
+                </button>
             </div>
         </div>
 
-        <!-- Components List -->
-        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto table-scroll">
-            <table class="w-full text-left border-collapse min-w-[400px]">
-                <thead>
-                    <tr class="bg-gray-800 text-gray-300">
-                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Component</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">Cost</th>
-                        <th class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="componentTableBody">
-                    <!-- Components populate here -->
-                </tbody>
-            </table>
+        <!-- Components List (Card based items) -->
+        <div id="componentList" class="flex flex-col gap-3">
+            <!-- Components populate here -->
         </div>
     </div>
 
@@ -136,13 +159,13 @@
             
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 if (btn.getAttribute('data-phase') === phase) {
-                    btn.className = "tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all transform hover:-translate-y-0.5";
+                    btn.className = "tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-blue-600 text-white transition-all";
                 } else {
-                    btn.className = "tab-btn px-5 py-2 md:px-6 md:py-2.5 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-all transform hover:-translate-y-0.5";
+                    btn.className = "tab-btn px-5 py-2.5 md:px-6 rounded-full whitespace-nowrap text-sm md:text-base font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 transition-all";
                 }
             });
             
-            renderTable();
+            renderProjects();
         }
 
         function showDetailsView(id) {
@@ -158,7 +181,7 @@
             document.getElementById('detailsView').classList.add('hidden');
             document.getElementById('mainView').classList.remove('hidden');
             window.scrollTo(0, 0);
-            renderTable();
+            renderProjects();
         }
 
         function addProject() {
@@ -171,10 +194,13 @@
             projects.push({ id: Date.now(), name: name, description: desc, status: status, components: [] });
             saveData();
             
+            // Close details accordion on mobile after saving
+            document.querySelector('details').removeAttribute('open');
+            
             if (currentFilter !== 'All' && currentFilter !== status) {
                 setFilter('All');
             } else {
-                renderTable();
+                renderProjects();
             }
             
             document.getElementById('projName').value = '';
@@ -185,7 +211,7 @@
             if(confirm("Are you sure you want to delete this project?")) {
                 projects = projects.filter(p => p.id !== id);
                 saveData();
-                renderTable();
+                renderProjects();
             }
         }
 
@@ -194,7 +220,7 @@
             if (project) {
                 project.status = newStatus;
                 saveData();
-                renderTable(); 
+                renderProjects(); 
             }
         }
 
@@ -203,10 +229,10 @@
             return project.components.reduce((sum, comp) => sum + Number(comp.cost), 0);
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('projectTableBody');
+        function renderProjects() {
+            const grid = document.getElementById('projectGrid');
             const emptyState = document.getElementById('emptyState');
-            tbody.innerHTML = ''; 
+            grid.innerHTML = ''; 
 
             const filteredProjects = currentFilter === 'All' 
                 ? projects 
@@ -214,11 +240,14 @@
 
             if (filteredProjects.length === 0) {
                 emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
             } else {
                 emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
             }
 
-            filteredProjects.forEach(p => {
+            // Reverse to show newest first
+            [...filteredProjects].reverse().forEach(p => {
                 const totalCost = getProjectTotalCost(p);
                 
                 const selectOptionsHTML = statusOptionsList.map(status => {
@@ -226,26 +255,42 @@
                     return `<option value="${status}" ${isSelected}>${status}</option>`;
                 }).join('');
 
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-800 transition-colors";
-                row.innerHTML = `
-                    <td class="p-3 md:p-4 border-b border-gray-700 font-medium cursor-pointer text-blue-300 hover:text-blue-100 whitespace-nowrap" onclick="showDetailsView(${p.id})">
-                        ${p.name} <span class="text-xs text-gray-500 ml-2 hidden sm:inline">(Click for parts)</span>
-                    </td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 text-sm text-gray-400 min-w-[150px]">
-                        ${p.description || '<span class="text-gray-600 italic">No description</span>'}
-                    </td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">
-                        <select onchange="updateProjectStatus(${p.id}, this.value)" class="table-select px-2 py-2 text-sm md:text-base rounded text-white outline-none w-full min-w-[110px]">
-                            ${selectOptionsHTML}
-                        </select>
-                    </td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 font-mono whitespace-nowrap">$${totalCost.toFixed(2)}</td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">
-                        <button onclick="deleteProject(${p.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1 transition-colors">Delete</button>
-                    </td>
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-2xl p-5 flex flex-col h-full hover:border-slate-500 transition-colors";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3 gap-2">
+                        <h3 class="text-xl md:text-2xl font-bold text-white leading-tight truncate flex-1">${p.name}</h3>
+                        <div class="bg-slate-900 px-2 py-1 rounded-lg border border-slate-700 font-mono text-green-400 font-bold text-sm shrink-0">
+                            $${totalCost.toFixed(2)}
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm md:text-base text-slate-400 mb-6 flex-grow line-clamp-3">
+                        ${p.description || '<span class="italic opacity-50">No description</span>'}
+                    </p>
+                    
+                    <div class="mt-auto flex flex-col gap-3">
+                        <div class="relative">
+                            <select onchange="updateProjectStatus(${p.id}, this.value)" class="w-full appearance-none bg-slate-800 border-slate-600 rounded-xl py-3 px-4 text-sm font-medium text-slate-200">
+                                ${selectOptionsHTML}
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="showDetailsView(${p.id})" class="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl py-3 font-bold text-sm transition-colors flex justify-center items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                Parts (${p.components.length})
+                            </button>
+                            <button onclick="deleteProject(${p.id})" class="bg-slate-800 border border-slate-700 hover:bg-red-900/50 text-slate-400 hover:text-red-400 hover:border-red-900 rounded-xl px-4 py-3 font-bold transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                grid.appendChild(card);
             });
         }
 
@@ -292,31 +337,39 @@
 
             document.getElementById('detailTotal').textContent = `$${getProjectTotalCost(project).toFixed(2)}`;
 
-            const tbody = document.getElementById('componentTableBody');
-            tbody.innerHTML = '';
+            const list = document.getElementById('componentList');
+            list.innerHTML = '';
 
             if (project.components.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-gray-500">No components added yet.</td></tr>`;
+                list.innerHTML = `
+                    <div class="text-center py-10 bg-slate-800/50 rounded-2xl border border-slate-700/50 border-dashed">
+                        <p class="text-slate-500 font-medium">No components added yet.</p>
+                    </div>`;
                 return;
             }
 
-            project.components.forEach(c => {
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-800 transition-colors";
-                row.innerHTML = `
-                    <td class="p-3 md:p-4 border-b border-gray-700 whitespace-nowrap">${c.name}</td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 font-mono whitespace-nowrap">$${Number(c.cost).toFixed(2)}</td>
-                    <td class="p-3 md:p-4 border-b border-gray-700 text-center whitespace-nowrap">
-                        <button onclick="deleteComponent(${c.id})" class="text-red-400 hover:text-red-300 font-medium px-2 py-1 transition-colors">Remove</button>
-                    </td>
+            // Reverse to show newest parts at the top
+            [...project.components].reverse().forEach(c => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-800 p-4 md:p-5 rounded-2xl border border-slate-700 flex justify-between items-center group hover:border-slate-500 transition-colors gap-4";
+                item.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-white text-lg md:text-xl truncate">${c.name}</h4>
+                    </div>
+                    <div class="flex items-center gap-4 shrink-0">
+                        <span class="font-mono text-green-400 font-bold text-lg md:text-xl">$${Number(c.cost).toFixed(2)}</span>
+                        <button onclick="deleteComponent(${c.id})" class="text-slate-500 hover:text-red-400 hover:bg-red-900/30 active:bg-red-900/50 p-2 md:p-3 rounded-xl transition-colors">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                list.appendChild(item);
             });
         }
 
         function saveData() { localStorage.setItem('hardwareProjects', JSON.stringify(projects)); }
 
-        renderTable();
+        renderProjects();
     </script>
 </body>
 </html>
