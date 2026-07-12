@@ -13,10 +13,14 @@
         .table-select { background-color: #374151; border: 1px solid #4B5563; cursor: pointer; }
         .table-select:hover { border-color: #60A5FA; }
         
-        /* Custom scrollbar for horizontal tables on desktop, invisible on mobile */
-        ::-webkit-scrollbar { height: 6px; }
-        ::-webkit-scrollbar-track { background: #1e1e1e; }
-        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
+        /* Hide scrollbars for clean tab navigation on mobile */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom scrollbar for horizontal tables */
+        .table-scroll::-webkit-scrollbar { height: 6px; }
+        .table-scroll::-webkit-scrollbar-track { background: #1e1e1e; }
+        .table-scroll::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
     </style>
 </head>
 <body class="p-3 md:p-8 max-w-4xl mx-auto">
@@ -27,13 +31,9 @@
 
         <!-- Add New Project Form -->
         <div class="glass-panel p-4 md:p-5 rounded-lg mb-8 flex flex-col gap-4">
-            <!-- Row 1: Name -->
             <input type="text" id="projName" placeholder="Project Name (e.g. Strat Build)" class="w-full p-3 rounded text-lg">
-            
-            <!-- Row 2: Description -->
             <input type="text" id="projDesc" placeholder="Short description..." class="w-full p-3 rounded">
             
-            <!-- Row 3: Phase & Button (Stacks on mobile, row on tablet/desktop) -->
             <div class="flex flex-col sm:flex-row gap-3">
                 <select id="projStatus" class="p-3 rounded w-full sm:w-64">
                     <option value="Idea">Idea</option>
@@ -46,8 +46,18 @@
             </div>
         </div>
 
+        <!-- Phase Navigation Tabs -->
+        <div class="flex overflow-x-auto gap-2 mb-4 pb-2 no-scrollbar" id="phaseTabs">
+            <button onclick="setFilter('All')" data-phase="All" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-blue-600 text-white transition-colors">All Projects</button>
+            <button onclick="setFilter('Idea')" data-phase="Idea" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Idea</button>
+            <button onclick="setFilter('Planning')" data-phase="Planning" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Planning</button>
+            <button onclick="setFilter('Sourcing Parts')" data-phase="Sourcing Parts" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Sourcing Parts</button>
+            <button onclick="setFilter('Building')" data-phase="Building" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Building</button>
+            <button onclick="setFilter('Done')" data-phase="Done" class="tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Done</button>
+        </div>
+
         <!-- Spreadsheet / Project List -->
-        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto">
+        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto table-scroll">
             <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
@@ -62,6 +72,10 @@
                     <!-- Projects populate here -->
                 </tbody>
             </table>
+            <!-- Empty State Message -->
+            <div id="emptyState" class="hidden p-8 text-center text-gray-500">
+                No projects in this phase.
+            </div>
         </div>
     </div>
 
@@ -71,7 +85,6 @@
             <span class="text-xl">&larr;</span> <span>Back to Dashboard</span>
         </button>
 
-        <!-- Header: Stacks on mobile -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
             <div>
                 <h1 id="detailTitle" class="text-3xl font-bold text-blue-400 leading-tight">Project Name</h1>
@@ -90,7 +103,7 @@
         </div>
 
         <!-- Components List -->
-        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto">
+        <div class="glass-panel rounded-lg overflow-hidden overflow-x-auto table-scroll">
             <table class="w-full text-left border-collapse min-w-[400px]">
                 <thead>
                     <tr class="bg-gray-800 text-gray-300">
@@ -111,6 +124,7 @@
         // App State
         let projects = JSON.parse(localStorage.getItem('hardwareProjects')) || [];
         let currentProjectId = null;
+        let currentFilter = 'All'; // New variable for tab state
         const statusOptionsList = ["Idea", "Planning", "Sourcing Parts", "Building", "Done"];
 
         // Data migration
@@ -119,12 +133,27 @@
             if (!p.description) p.description = "";
         });
 
-        // --- NAVIGATION ---
+        // --- NAVIGATION & FILTERS ---
+        function setFilter(phase) {
+            currentFilter = phase;
+            
+            // Update button styles visually
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.getAttribute('data-phase') === phase) {
+                    btn.className = "tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-blue-600 text-white transition-colors";
+                } else {
+                    btn.className = "tab-btn px-5 py-2 rounded-full whitespace-nowrap text-sm font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors";
+                }
+            });
+            
+            renderTable();
+        }
+
         function showDetailsView(id) {
             currentProjectId = id;
             document.getElementById('mainView').classList.add('hidden');
             document.getElementById('detailsView').classList.remove('hidden');
-            window.scrollTo(0, 0); // Reset scroll position for mobile
+            window.scrollTo(0, 0); 
             renderDetails();
         }
 
@@ -153,7 +182,13 @@
             });
             
             saveData();
-            renderTable();
+            
+            // If the user adds a project that doesn't match the current tab, switch back to 'All' so they can see it
+            if (currentFilter !== 'All' && currentFilter !== status) {
+                setFilter('All');
+            } else {
+                renderTable();
+            }
             
             document.getElementById('projName').value = '';
             document.getElementById('projDesc').value = '';
@@ -172,6 +207,7 @@
             if (project) {
                 project.status = newStatus;
                 saveData();
+                renderTable(); // Re-render immediately (if filtered, it might disappear from the current view!)
             }
         }
 
@@ -182,9 +218,22 @@
 
         function renderTable() {
             const tbody = document.getElementById('projectTableBody');
+            const emptyState = document.getElementById('emptyState');
             tbody.innerHTML = ''; 
 
-            projects.forEach(p => {
+            // Filter logic
+            const filteredProjects = currentFilter === 'All' 
+                ? projects 
+                : projects.filter(p => p.status === currentFilter);
+
+            // Handle empty state
+            if (filteredProjects.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filteredProjects.forEach(p => {
                 const totalCost = getProjectTotalCost(p);
                 
                 const selectOptionsHTML = statusOptionsList.map(status => {
